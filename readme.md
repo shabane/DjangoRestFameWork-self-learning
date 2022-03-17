@@ -35,7 +35,7 @@ the case setiation.
 
 the *Meta* class will tell the Serializer to user which *model* instance and which one of it`s *fields*.
 
-> Note that we can use '__all__' for all the fields
+> Note that we can use `__all__` for all the fields
 
 ```python
 from rest_framework import serializer
