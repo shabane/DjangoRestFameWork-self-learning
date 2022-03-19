@@ -52,6 +52,7 @@ class DemandView(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer_class = DemandSerializer(data=request.data)
         if serializer_class.is_valid():
+            print("*"*4, serializer_class.validated_data['product'].price) # we should use this instead of quering again.
             print('yes')
             product = Products.objects.get(pk=int(request.data['product']))
             customer = Customer.objects.get(pk=int(request.data['consumer']))
