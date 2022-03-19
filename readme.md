@@ -156,9 +156,17 @@ while your venv is activate run this commands
 >     'rest_framework_simplejwt',
 >]
 >
+>
+> # setting and config for jwt is 
+>
+>SIMPLE_JWT = {
+> # setting of jwt are config here with dict
+> }
+>
+>
 > ```
 
-4. config the jwt
+1. config the jwt urls
 ```python
 urlpatterns = [
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
