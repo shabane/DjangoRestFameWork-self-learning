@@ -1,10 +1,17 @@
 from rest_framework import viewsets
-from rest_framework import generics
+from rest_framework.views import APIView
+from rest_framework import generics, mixins
 from .models import User, Products, Producer, Customer, OnDemand
 from .serializer import UserSerializer, ProductSerializer, ProducerSerializer, CustomerSerializer, DemandSerializer
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.parsers import JSONParser
+from rest_framework.pagination import PageNumberPagination
 
 
 class UserViewSet(viewsets.ModelViewSet):
+    pagination_class = PageNumberPagination
+    pagination_class.page_size = 5
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -27,3 +34,41 @@ class CustomerView(viewsets.ModelViewSet):
 class DemandView(viewsets.ModelViewSet):
     queryset = OnDemand.objects.all()
     serializer_class = DemandSerializer
+    
+    # this will work for all other functions
+    pagination_class = PageNumberPagination
+    pagination_class.page_size = 5
+    
+    def list(self, request, *args, **kwargs):
+        # this pagination will just work for this function
+        pagination_class = PageNumberPagination()
+        pagination_class.page_size = 5
+        queryset = pagination_class.paginate_queryset(queryset=OnDemand.objects.all(), request=request)
+        serializer_class = DemandSerializer(data=queryset, many=True)
+        serializer_class.is_valid()
+        print(serializer_class.data)
+        return Response(serializer_class.data)
+
+    def create(self, request, *args, **kwargs):
+        serializer_class = DemandSerializer(data=request.data)
+        if serializer_class.is_valid():
+            print('yes')
+            product = Products.objects.get(pk=int(request.data['product']))
+            customer = Customer.objects.get(pk=int(request.data['consumer']))
+            customer.account_amount = customer.account_amount - product.price * int(request.data['replica'])
+            product.entity = int(request.data['replica'])
+            customer.save()
+            product.save()
+            print(customer.account_amount)
+            res = {
+                'msg': 'ok',
+                'data': request.data
+            }
+            return Response(res)
+        else:
+            print('fuuuuck')
+            res = {
+                'msg': 'err',
+                'data': serializer_class.errors
+            }
+            return Response(res)

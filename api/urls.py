@@ -8,7 +8,8 @@ router.register('users', UserViewSet)
 router.register('prduct', ProductListView)
 router.register('producer', ProducerListView)
 router.register('customer', CustomerView)
-router.register('demand', DemandView)
+router.register('demand', DemandView, basename='DemandView')
+
 
 
 urlpatterns = [

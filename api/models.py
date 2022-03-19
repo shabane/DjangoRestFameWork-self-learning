@@ -34,7 +34,7 @@ class Products(models.Model):
 
 
 class Customer(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, unique=True)
     account_amount = models.PositiveIntegerField(default=10000)
 
     def __str__(self) -> str:
