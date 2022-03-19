@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'rest_framework',
     'django_extensions',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -107,6 +108,14 @@ AUTH_PASSWORD_VALIDATORS = [
 #     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
 #     'PAGE_SIZE': 10
 # }
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/

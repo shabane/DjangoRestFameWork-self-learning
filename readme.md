@@ -1,4 +1,4 @@
-### installing
+## installing
 
 1. create *virtual enviroments* `virtualenv env`
 2. active *virtual enviroments* `source /env/bin/activate`
@@ -137,5 +137,56 @@ class DemandSerializer(ViewSets.ModelViewset):
 ## pagination
 ...
 
+
+---
+
+
 ## token
-...
+
+- instalation
+while your venv is activate run this commands
+
+1. `pip3 install djangorestframework_simplejwt`
+2. import the jwt `from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView` in *urls.py*
+
+> 3. now set this plugin in the installed app
+>
+> ```python
+> INSTALLED_APPS = [
+>     'rest_framework_simplejwt',
+>]
+>
+> ```
+
+4. config the jwt
+```python
+urlpatterns = [
+    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+]
+```
+
+5. all done! just `curl` the site with username and password of one user to retrive two differnt token.
+   5.1 firest one is used to access the data.
+   5.2 is used to *revoke* the token
+   ```python
+   $ curl \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"username": "admin", "password": "12345678"}' \
+  http://localhost:8000/api/token/
+
+# {
+  "access":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3BrIjoxLCJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiY29sZF9zdHVmZiI6IuKYgyIsImV4cCI6MTIzNDU2LCJqdGkiOiJmZDJmOWQ1ZTFhN2M0MmU4OTQ5MzVlMzYyYmNhOGJjYSJ9.NHlztMGER7UADHZJlxNG0WSi22a2KaYSfd1S-AuT7lU",
+  "refresh":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3BrIjoxLCJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImNvbGRfc3R1ZmYiOiLimIMiLCJleHAiOjIzNDU2NywianRpIjoiZGUxMmY0ZTY3MDY4NDI3ODg5ZjE1YWMyNzcwZGEwNTEifQ.aEoAYkSJjoWH1boshQAaTkf8G3yn0kapko6HFRt7Rh4"
+}
+   ```
+
+6. revoke the token
+
+to revoke the token just curl the refresh address with the last token and it will give you another access token.
+
+```python
+curl \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3BrIjoxLCJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiY29sZF9zdHVmZiI6IuKYgyIsImV4cCI6MTIzNDU2LCJqdGkiOiJmZDJmOWQ1ZTFhN2M0MmU4OTQ5MzVlMzYyYmNhOGJjYSJ9.NHlztMGER7UADHZJlxNG0WSi22a2KaYSfd1S-AuT7lU" \
+  http://localhost:8000/api/some-protected-view/
+```
