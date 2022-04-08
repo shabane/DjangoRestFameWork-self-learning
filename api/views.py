@@ -36,14 +36,14 @@ class DemandView(viewsets.ModelViewSet):
     serializer_class = DemandSerializer
     
     # this will work for all other functions
-    pagination_class = PageNumberPagination
-    pagination_class.page_size = 5
+    # pagination_class = PageNumberPagination
+    # pagination_class.page_size = 5
     
     def list(self, request, *args, **kwargs):
         # this pagination will just work for this function
-        pagination_class = PageNumberPagination()
-        pagination_class.page_size = 5
-        queryset = pagination_class.paginate_queryset(queryset=OnDemand.objects.all(), request=request)
+        # pagination_class = PageNumberPagination()
+        # pagination_class.page_size = 5
+        queryset = OnDemand.objects.all()
         serializer_class = DemandSerializer(data=queryset, many=True)
         serializer_class.is_valid()
         print(serializer_class.data)
@@ -56,6 +56,8 @@ class DemandView(viewsets.ModelViewSet):
             print('yes')
             product = Products.objects.get(pk=int(request.data['product']))
             customer = Customer.objects.get(pk=int(request.data['consumer']))
+            OnDemand.objects.create(replica=serializer_class.validated_data['replica'], product=product, consumer=customer, producer=serializer_class.validated_data['producer'])
+            print('__'*10, serializer_class.validated_data)
             customer.account_amount = customer.account_amount - product.price * int(request.data['replica'])
             product.entity = int(request.data['replica'])
             customer.save()
@@ -68,6 +70,7 @@ class DemandView(viewsets.ModelViewSet):
             return Response(res)
         else:
             print('fuuuuck')
+            print(serializer_class.errors)
             res = {
                 'msg': 'err',
                 'data': serializer_class.errors
